@@ -9,28 +9,28 @@ from sklearn.preprocessing import StandardScaler
 from skimage.feature import hog
 # NOTE: the next import is only valid for scikit-learn version <= 0.17
 # for scikit-learn >= 0.18 use:
-# from sklearn.model_selection import train_test_split
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
+# from sklearn.cross_validation import train_test_split
 
 # Define a function to return HOG features and visualization
-def get_hog_features(img, orient, pix_per_cell, cell_per_block, 
+def get_hog_features(img, orient, pix_per_cell, cell_per_block,
                         vis=False, feature_vec=True):
     # Call with two outputs if vis==True
     if vis == True:
         features, hog_image = hog(img, orientations=orient, pixels_per_cell=(pix_per_cell, pix_per_cell),
-                                  cells_per_block=(cell_per_block, cell_per_block), transform_sqrt=True, 
+                                  cells_per_block=(cell_per_block, cell_per_block), transform_sqrt=True,
                                   visualise=vis, feature_vector=feature_vec)
         return features, hog_image
     # Otherwise call with one output
-    else:      
+    else:
         features = hog(img, orientations=orient, pixels_per_cell=(pix_per_cell, pix_per_cell),
-                       cells_per_block=(cell_per_block, cell_per_block), transform_sqrt=True, 
+                       cells_per_block=(cell_per_block, cell_per_block), transform_sqrt=True,
                        visualise=vis, feature_vector=feature_vec)
         return features
 
 # Define a function to extract features from a list of images
 # Have this function call bin_spatial() and color_hist()
-def extract_features(imgs, cspace='RGB', orient=9, 
+def extract_features(imgs, cspace='RGB', orient=9,
                         pix_per_cell=8, cell_per_block=2, hog_channel=0):
     # Create a list to append feature vectors to
     features = []
@@ -50,18 +50,18 @@ def extract_features(imgs, cspace='RGB', orient=9,
                 feature_image = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)
             elif cspace == 'YCrCb':
                 feature_image = cv2.cvtColor(image, cv2.COLOR_RGB2YCrCb)
-        else: feature_image = np.copy(image)      
+        else: feature_image = np.copy(image)
 
         # Call get_hog_features() with vis=False, feature_vec=True
         if hog_channel == 'ALL':
             hog_features = []
             for channel in range(feature_image.shape[2]):
-                hog_features.append(get_hog_features(feature_image[:,:,channel], 
-                                    orient, pix_per_cell, cell_per_block, 
+                hog_features.append(get_hog_features(feature_image[:,:,channel],
+                                    orient, pix_per_cell, cell_per_block,
                                     vis=False, feature_vec=True))
-            hog_features = np.ravel(hog_features)        
+            hog_features = np.ravel(hog_features)
         else:
-            hog_features = get_hog_features(feature_image[:,:,hog_channel], orient, 
+            hog_features = get_hog_features(feature_image[:,:,hog_channel], orient,
                         pix_per_cell, cell_per_block, vis=False, feature_vec=True)
         # Append the new feature vector to the features list
         features.append(hog_features)
@@ -70,14 +70,28 @@ def extract_features(imgs, cspace='RGB', orient=9,
 
 
 # Divide up into cars and notcars
-images = glob.glob('*.jpeg')
+images_vehicle = glob.glob('vehicles/vehicles/GTI_Far/*.png')
+images_non_vehicle = glob.glob('non-vehicles/non-vehicles/Extras/*.png')
+
+# images_vehicle = glob.glob('vehicles/vehicles/GTI_Far/?????0001.png')
+# images_non_vehicle = glob.glob('non-vehicles/non-vehicles/Extras/?????1.png')
+
 cars = []
 notcars = []
+
+for image in images_vehicle:
+    cars.append(image)
+
+for image in images_non_vehicle:
+    notcars.append(image)
+
+'''
 for image in images:
     if 'image' in image or 'extra' in image:
         notcars.append(image)
     else:
         cars.append(image)
+'''
 
 # Reduce the sample size because HOG features are slow to compute
 # The quiz evaluator times out after 13s of CPU time
@@ -86,23 +100,27 @@ cars = cars[0:sample_size]
 notcars = notcars[0:sample_size]
 
 ### TODO: Tweak these parameters and see how the results change.
-colorspace = 'LUV' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
+# bug  when using 'LUV': feature_image in the extract_feature
+# function has negative values
+# colorspace = 'LUV' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
+colorspace = 'HSV' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
 orient = 9
 pix_per_cell = 8
 cell_per_block = 2
 hog_channel = "ALL" # Can be 0, 1, 2, or "ALL"
 
+import ipdb; ipdb.set_trace() #
 t=time.time()
-car_features = extract_features(cars, cspace=colorspace, orient=orient, 
-                        pix_per_cell=pix_per_cell, cell_per_block=cell_per_block, 
+car_features = extract_features(cars, cspace=colorspace, orient=orient,
+                        pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
                         hog_channel=hog_channel)
-notcar_features = extract_features(notcars, cspace=colorspace, orient=orient, 
-                        pix_per_cell=pix_per_cell, cell_per_block=cell_per_block, 
+notcar_features = extract_features(notcars, cspace=colorspace, orient=orient,
+                        pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
                         hog_channel=hog_channel)
 t2 = time.time()
 print(round(t2-t, 2), 'Seconds to extract HOG features...')
 # Create an array stack of feature vectors
-X = np.vstack((car_features, notcar_features)).astype(np.float64)                        
+X = np.vstack((car_features, notcar_features)).astype(np.float64)
 # Fit a per-column scaler
 X_scaler = StandardScaler().fit(X)
 # Apply the scaler to X
@@ -120,7 +138,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 print('Using:',orient,'orientations',pix_per_cell,
     'pixels per cell and', cell_per_block,'cells per block')
 print('Feature vector length:', len(X_train[0]))
-# Use a linear SVC 
+# Use a linear SVC
 svc = LinearSVC()
 # Check the training time for the SVC
 t=time.time()

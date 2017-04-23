@@ -5,14 +5,14 @@ import matplotlib.image as mpimg
 from sklearn.preprocessing import StandardScaler
 import glob
 
-# Define a function to compute binned color features  
+# Define a function to compute binned color features
 def bin_spatial(img, size=(32, 32)):
     # Use cv2.resize().ravel() to create the feature vector
-    features = cv2.resize(img, size).ravel() 
+    features = cv2.resize(img, size).ravel()
     # Return the feature vector
     return features
 
-# Define a function to compute color histogram features  
+# Define a function to compute color histogram features
 def color_hist(img, nbins=32, bins_range=(0, 256)):
     # Compute the histogram of the color channels separately
     channel1_hist = np.histogram(img[:,:,0], bins=nbins, range=bins_range)
@@ -54,7 +54,7 @@ def extract_features(imgs, cspace='RGB', spatial_size=(32, 32),
         features.append(np.concatenate((feature_bin, feature_hist)))
     # Return list of feature vectors
     return features
-
+'''
 images = glob.glob('*.jpeg')
 cars = []
 notcars = []
@@ -63,7 +63,20 @@ for image in images:
         notcars.append(image)
     else:
         cars.append(image)
-        
+'''
+
+images_vehicle = glob.glob('vehicles/vehicles/GTI_Far/?????0001.png')
+images_non_vehicle = glob.glob('non-vehicles/non-vehicles/Extras/?????1.png')
+
+cars = []
+notcars = []
+
+for image in images_vehicle:
+    cars.append(image)
+
+for image in images_non_vehicle:
+    notcars.append(image)
+
 car_features = extract_features(cars, cspace='RGB', spatial_size=(32, 32),
                         hist_bins=32, hist_range=(0, 256))
 notcar_features = extract_features(notcars, cspace='RGB', spatial_size=(32, 32),
@@ -71,7 +84,7 @@ notcar_features = extract_features(notcars, cspace='RGB', spatial_size=(32, 32),
 
 if len(car_features) > 0:
     # Create an array stack of feature vectors
-    X = np.vstack((car_features, notcar_features)).astype(np.float64)                        
+    X = np.vstack((car_features, notcar_features)).astype(np.float64)
     # Fit a per-column scaler
     X_scaler = StandardScaler().fit(X)
     # Apply the scaler to X
@@ -89,5 +102,6 @@ if len(car_features) > 0:
     plt.plot(scaled_X[car_ind])
     plt.title('Normalized Features')
     fig.tight_layout()
-else: 
+    plt.show()
+else:
     print('Your function only returns empty feature vectors...')
