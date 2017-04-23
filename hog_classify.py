@@ -31,9 +31,12 @@ def get_hog_features(img, orient, pix_per_cell, cell_per_block,
 # Define a function to extract features from a list of images
 # Have this function call bin_spatial() and color_hist()
 def extract_features(imgs, cspace='RGB', orient=9,
-                        pix_per_cell=8, cell_per_block=2, hog_channel=0):
+                        pix_per_cell=8, cell_per_block=2, hog_channel=0, vis=False):
     # Create a list to append feature vectors to
     features = []
+    if vis == True:
+        hog_images = []
+
     # Iterate through the list of images
     for file in imgs:
         # Read in each one by one
@@ -56,18 +59,36 @@ def extract_features(imgs, cspace='RGB', orient=9,
         if hog_channel == 'ALL':
             hog_features = []
             for channel in range(feature_image.shape[2]):
-                hog_features.append(get_hog_features(feature_image[:,:,channel],
-                                    orient, pix_per_cell, cell_per_block,
-                                    vis=False, feature_vec=True))
-            hog_features = np.ravel(hog_features)
-        else:
-            hog_features = get_hog_features(feature_image[:,:,hog_channel], orient,
-                        pix_per_cell, cell_per_block, vis=False, feature_vec=True)
-        # Append the new feature vector to the features list
-        features.append(hog_features)
-    # Return list of feature vectors
-    return features
+                if vis == False:
+                    hog_feature = get_hog_features(feature_image[:,:,channel],
+                                                    orient, pix_per_cell, cell_per_block,
+                                                    vis, feature_vec=True)
+                    hog_features.append(hog_feature)
 
+                else:
+                    hog_feature, hog_image = get_hog_features(feature_image[:,:,channel],
+                                                            orient, pix_per_cell, cell_per_block,
+                                                            vis, feature_vec=True)
+                    hog_features.append(hog_feature)
+                    hog_images.append(hog_image)
+
+            hog_features = np.ravel(hog_features)
+            features.append(hog_features)
+        else:
+            if vis == False:
+                hog_features = get_hog_features(feature_image[:,:,hog_channel], orient,
+                           pix_per_cell, cell_per_block, vis, feature_vec=True)
+                features.append(hog_features)
+            else:
+                hog_features, hog_images = get_hog_features(feature_image[:,:,hog_channel], orient,
+                           pix_per_cell, cell_per_block, vis, feature_vec=True)
+                features.append(hog_features)
+
+
+    if vis == False:
+        return features
+    else:
+        return features, hog_images
 
 # Divide up into cars and notcars
 images_vehicle = glob.glob('vehicles/vehicles/GTI_Far/*.png')
@@ -85,14 +106,6 @@ for image in images_vehicle:
 for image in images_non_vehicle:
     notcars.append(image)
 
-'''
-for image in images:
-    if 'image' in image or 'extra' in image:
-        notcars.append(image)
-    else:
-        cars.append(image)
-'''
-
 # Reduce the sample size because HOG features are slow to compute
 # The quiz evaluator times out after 13s of CPU time
 sample_size = 500
@@ -108,15 +121,28 @@ orient = 9
 pix_per_cell = 8
 cell_per_block = 2
 hog_channel = "ALL" # Can be 0, 1, 2, or "ALL"
+vis = True
 
 import ipdb; ipdb.set_trace() #
 t=time.time()
-car_features = extract_features(cars, cspace=colorspace, orient=orient,
-                        pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
-                        hog_channel=hog_channel)
-notcar_features = extract_features(notcars, cspace=colorspace, orient=orient,
-                        pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
-                        hog_channel=hog_channel)
+
+if vis == False:
+    car_features = extract_features(cars, cspace=colorspace, orient=orient,
+                            pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
+                            hog_channel=hog_channel, vis=vis)
+else:
+    car_features, car_images = extract_features(cars, cspace=colorspace, orient=orient,
+                                 pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
+                                 hog_channel=hog_channel, vis=vis)
+if vis == False:
+    notcar_features = extract_features(notcars, cspace=colorspace, orient=orient,
+                            pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
+                            hog_channel=hog_channel, vis=vis)
+else:
+    notcar_features, notcar_images = extract_features(notcars, cspace=colorspace, orient=orient,
+                            pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
+                            hog_channel=hog_channel, vis=vis)
+
 t2 = time.time()
 print(round(t2-t, 2), 'Seconds to extract HOG features...')
 # Create an array stack of feature vectors
@@ -150,7 +176,7 @@ print('Test Accuracy of SVC = ', round(svc.score(X_test, y_test), 4))
 # Check the prediction time for a single sample
 t=time.time()
 n_predict = 10
-print('My SVC predicts: ', svc.predict(X_test[0:n_predict]))
+print('    My SVC predicts: ', svc.predict(X_test[0:n_predict]))
 print('For these',n_predict, 'labels: ', y_test[0:n_predict])
 t2 = time.time()
 print(round(t2-t, 5), 'Seconds to predict', n_predict,'labels with SVC')
