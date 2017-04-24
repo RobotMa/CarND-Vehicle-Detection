@@ -91,8 +91,19 @@ def extract_features(imgs, cspace='RGB', orient=9,
         return features, hog_images
 
 # Divide up into cars and notcars
-images_vehicle = glob.glob('vehicles/vehicles/GTI_Far/*.png')
-images_non_vehicle = glob.glob('non-vehicles/non-vehicles/Extras/*.png')
+# Read vehicle folders' names
+folders_vehicle = glob.glob('vehicles/vehicles/*')
+images_vehicle = []
+for folder in folders_vehicle:
+    image_names = folder + '/*.png'
+    images_vehicle = images_vehicle +  glob.glob(image_names)
+
+# Read non-vehicle folders' names
+folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/*')
+images_non_vehicle = []
+for folder in folders_non_vehicle:
+    image_names = folder + '/*.png'
+    images_non_vehicle = images_non_vehicle +  glob.glob(image_names)
 
 # images_vehicle = glob.glob('vehicles/vehicles/GTI_Far/?????0001.png')
 # images_non_vehicle = glob.glob('non-vehicles/non-vehicles/Extras/?????1.png')
@@ -106,11 +117,16 @@ for image in images_vehicle:
 for image in images_non_vehicle:
     notcars.append(image)
 
+print('Read {:} images of car'.format(len(cars)))
+print('Read {:} images of notcar'.format(len(notcars)))
+
 # Reduce the sample size because HOG features are slow to compute
 # The quiz evaluator times out after 13s of CPU time
-sample_size = 500
-cars = cars[0:sample_size]
-notcars = notcars[0:sample_size]
+subsampling = False
+if subsampling == True:
+    sample_size = 500
+    cars = cars[0:sample_size]
+    notcars = notcars[0:sample_size]
 
 ### TODO: Tweak these parameters and see how the results change.
 # bug  when using 'LUV': feature_image in the extract_feature
