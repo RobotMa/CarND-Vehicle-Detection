@@ -1,0 +1,66 @@
+Read 8792 images of car
+Read 8968 images of notcar
+------------- histbin = 4 -------------
+Using spatial binning of: 16 and 4 histogram bins
+Feature vector length: 780
+12.07 Seconds to train SVC...
+Test Accuracy of SVC =  0.9229
+My SVC predicts:  [ 0.  0.  0.  1.  1.  0.  1.  1.  0.  0.]
+For these 10 labels:  [ 0.  0.  0.  1.  1.  1.  1.  0.  0.  0.]
+0.00065 Seconds to predict 10 labels with SVC
+------------- histbin = 8 -------------
+Using spatial binning of: 16 and 8 histogram bins
+Feature vector length: 792
+12.02 Seconds to train SVC...
+Test Accuracy of SVC =  0.9245
+My SVC predicts:  [ 1.  0.  0.  1.  1.  1.  1.  1.  1.  0.]
+For these 10 labels:  [ 1.  0.  0.  1.  1.  1.  1.  1.  1.  0.]
+0.00069 Seconds to predict 10 labels with SVC
+------------- histbin = 12 -------------
+Using spatial binning of: 16 and 12 histogram bins
+Feature vector length: 804
+12.1 Seconds to train SVC...
+Test Accuracy of SVC =  0.9344
+My SVC predicts:  [ 0.  1.  1.  0.  1.  1.  1.  1.  1.  0.]
+For these 10 labels:  [ 0.  1.  1.  0.  1.  1.  1.  1.  1.  0.]
+0.00096 Seconds to predict 10 labels with SVC
+------------- histbin = 16 -------------
+Using spatial binning of: 16 and 16 histogram bins
+Feature vector length: 816
+12.17 Seconds to train SVC...
+Test Accuracy of SVC =  0.9198
+My SVC predicts:  [ 1.  0.  1.  0.  0.  1.  1.  1.  1.  0.]
+For these 10 labels:  [ 1.  0.  1.  0.  0.  1.  1.  0.  1.  0.]
+0.00093 Seconds to predict 10 labels with SVC
+------------- histbin = 20 -------------
+Using spatial binning of: 16 and 20 histogram bins
+Feature vector length: 828
+12.1 Seconds to train SVC...
+Test Accuracy of SVC =  0.9268
+My SVC predicts:  [ 0.  0.  0.  0.  1.  0.  0.  0.  0.  0.]
+For these 10 labels:  [ 0.  1.  0.  0.  1.  0.  1.  0.  0.  0.]
+0.00095 Seconds to predict 10 labels with SVC
+------------- histbin = 24 -------------
+Using spatial binning of: 16 and 24 histogram bins
+Feature vector length: 840
+11.84 Seconds to train SVC...
+Test Accuracy of SVC =  0.924
+My SVC predicts:  [ 1.  1.  1.  1.  1.  0.  0.  0.  1.  0.]
+For these 10 labels:  [ 1.  1.  1.  1.  1.  0.  0.  0.  1.  0.]
+0.00094 Seconds to predict 10 labels with SVC
+------------- histbin = 28 -------------
+Using spatial binning of: 16 and 28 histogram bins
+Feature vector length: 852
+11.8 Seconds to train SVC...
+Test Accuracy of SVC =  0.9262
+My SVC predicts:  [ 0.  0.  1.  0.  1.  0.  0.  0.  1.  1.]
+For these 10 labels:  [ 0.  0.  1.  0.  1.  0.  0.  0.  1.  1.]
+0.00094 Seconds to predict 10 labels with SVC
+------------- histbin = 32 -------------
+Using spatial binning of: 16 and 32 histogram bins
+Feature vector length: 864
+11.75 Seconds to train SVC...
+Test Accuracy of SVC =  0.9158
+My SVC predicts:  [ 1.  1.  0.  1.  1.  0.  0.  1.  0.  0.]
+For these 10 labels:  [ 0.  1.  0.  0.  1.  0.  0.  1.  0.  0.]
+0.00093 Seconds to predict 10 labels with SVC

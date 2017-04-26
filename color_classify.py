@@ -103,9 +103,9 @@ histbin = 16
 
 for histbin in range(4, 36, 4):
     print('------------- histbin = {:} -------------'.format(histbin))
-    car_features = extract_features(cars, cspace='RGB', spatial_size=(spatial, spatial),
+    car_features = extract_features(cars, cspace='HLS', spatial_size=(spatial, spatial),
                             hist_bins=histbin, hist_range=(0, 256))
-    notcar_features = extract_features(notcars, cspace='RGB', spatial_size=(spatial, spatial),
+    notcar_features = extract_features(notcars, cspace='HLS', spatial_size=(spatial, spatial),
                             hist_bins=histbin, hist_range=(0, 256))
 
     # Create an array stack of feature vectors
