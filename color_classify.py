@@ -51,6 +51,9 @@ def extract_features(imgs, cspace='RGB', spatial_size=(32, 32),
                 feature_image = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
             elif cspace == 'YUV':
                 feature_image = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)
+            elif cspace == 'YCrCb':
+                feature_image = cv2.cvtColor(image, cv2.COLOR_RGB2YCrCb)
+
         else: feature_image = np.copy(image)
         # Apply bin_spatial() to get spatial color features
         spatial_features = bin_spatial(feature_image, size=spatial_size)
@@ -103,9 +106,9 @@ histbin = 16
 
 for histbin in range(4, 36, 4):
     print('------------- histbin = {:} -------------'.format(histbin))
-    car_features = extract_features(cars, cspace='HLS', spatial_size=(spatial, spatial),
+    car_features = extract_features(cars, cspace='LUV', spatial_size=(spatial, spatial),
                             hist_bins=histbin, hist_range=(0, 256))
-    notcar_features = extract_features(notcars, cspace='HLS', spatial_size=(spatial, spatial),
+    notcar_features = extract_features(notcars, cspace='LUV', spatial_size=(spatial, spatial),
                             hist_bins=histbin, hist_range=(0, 256))
 
     # Create an array stack of feature vectors
