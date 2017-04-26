@@ -12,6 +12,22 @@ from skimage.feature import hog
 from sklearn.model_selection import train_test_split
 # from sklearn.cross_validation import train_test_split
 
+# Define a function to return some characteristics of the dataset
+def data_look(car_list, notcar_list):
+    data_dict = {}
+    # Define a key in data_dict "n_cars" and store the number of car images
+    data_dict["n_cars"] = len(car_list)
+    # Define a key "n_notcars" and store the number of notcar images
+    data_dict["n_notcars"] = len(notcar_list)
+    # Read in a test image, either car or notcar
+    # Define a key "image_shape" and store the test image shape 3-tuple
+    img = mpimg.imread(car_list[0])
+    data_dict["image_shape"] = img.shape
+    # Define a key "data_type" and store the data type of the test image.
+    data_dict["data_type"] = img.dtype
+    # Return data_dict
+    return data_dict
+
 # Define a function to return HOG features and visualization
 def get_hog_features(img, orient, pix_per_cell, cell_per_block,
                         vis=False, feature_vec=True):
@@ -116,6 +132,15 @@ for image in images_vehicle:
 
 for image in images_non_vehicle:
     notcars.append(image)
+
+
+data_info = data_look(cars, notcars)
+
+print('Your function returned a count of',
+      data_info["n_cars"], ' cars and',
+      data_info["n_notcars"], ' non-cars')
+print('of size: ',data_info["image_shape"], ' and data type:',
+      data_info["data_type"])
 
 print('Read {:} images of car'.format(len(cars)))
 print('Read {:} images of notcar'.format(len(notcars)))
