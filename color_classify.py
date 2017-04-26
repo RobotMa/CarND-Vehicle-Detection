@@ -104,11 +104,11 @@ print('Read {:} images of notcar'.format(len(notcars)))
 spatial = 16
 histbin = 16
 
-for histbin in range(4, 36, 4):
-    print('------------- histbin = {:} -------------'.format(histbin))
-    car_features = extract_features(cars, cspace='YUV', spatial_size=(spatial, spatial),
+for spatial in range(4, 36, 4):
+    print('------------- spatial = {:} -------------'.format(spatial))
+    car_features = extract_features(cars, cspace='LUV', spatial_size=(spatial, spatial),
                             hist_bins=histbin, hist_range=(0, 256))
-    notcar_features = extract_features(notcars, cspace='YUV', spatial_size=(spatial, spatial),
+    notcar_features = extract_features(notcars, cspace='LUV', spatial_size=(spatial, spatial),
                             hist_bins=histbin, hist_range=(0, 256))
 
     # Create an array stack of feature vectors
