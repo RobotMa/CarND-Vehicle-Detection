@@ -101,11 +101,11 @@ print('Read {:} images of notcar'.format(len(notcars)))
 # spatial = 16
 # histbin = 16
 
-spatial = 16
+spatial = 12
 histbin = 16
 
-for spatial in range(4, 36, 4):
-    print('------------- spatial = {:} -------------'.format(spatial))
+for histbin in range(4, 64, 4):
+    print('------------- histbin = {:} -------------'.format(histbin))
     car_features = extract_features(cars, cspace='LUV', spatial_size=(spatial, spatial),
                             hist_bins=histbin, hist_range=(0, 256))
     notcar_features = extract_features(notcars, cspace='LUV', spatial_size=(spatial, spatial),
@@ -147,4 +147,7 @@ for spatial in range(4, 36, 4):
     t2 = time.time()
     print(round(t2-t, 5), 'Seconds to predict', n_predict,'labels with SVC')
 
-# Tests show that LUV color space has the best result
+# Tests show that LUV color space has the best result with fixed spatial and histbin
+# Tests show that spatial = 12 (16) has the best result with LUV and fixed histbin
+# Tests show that histbin = 48 has the best result with LUV and spatial = 12
+# LUV, spatial = 12 and histbin = 48 achieves 96% test accuracy
