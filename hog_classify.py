@@ -127,16 +127,16 @@ def color_hist(img, nbins=32, bins_range=(0, 256)):
 
 # Divide up into cars and notcars
 # Read vehicle folders' names
-# folders_vehicle = glob.glob('vehicles/vehicles/*')
-folders_vehicle = glob.glob('vehicles/vehicles/GTI_Far')
+folders_vehicle = glob.glob('vehicles/vehicles/*')
+# folders_vehicle = glob.glob('vehicles/vehicles/GTI_Far')
 images_vehicle = []
 for folder in folders_vehicle:
     image_names = folder + '/*.png'
     images_vehicle = images_vehicle +  glob.glob(image_names)
 
 # Read non-vehicle folders' names
-# folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/*')
-folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/GTI')
+folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/*')
+# folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/GTI')
 images_non_vehicle = []
 for folder in folders_non_vehicle:
     image_names = folder + '/*.png'
@@ -179,6 +179,8 @@ colorspace = 'HSV' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
 orient = 9
 pix_per_cell = 8
 cell_per_block = 2
+spatial_size = (16, 16)
+hist_bins = 48
 hog_channel = "ALL" # Can be 0, 1, 2, or "ALL"
 vis = True
 
