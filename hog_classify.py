@@ -127,16 +127,16 @@ def color_hist(img, nbins=32, bins_range=(0, 256)):
 
 # Divide up into cars and notcars
 # Read vehicle folders' names
-folders_vehicle = glob.glob('vehicles/vehicles/*')
-# folders_vehicle = glob.glob('vehicles/vehicles/GTI_Far')
+# folders_vehicle = glob.glob('vehicles/vehicles/*')
+folders_vehicle = glob.glob('vehicles/vehicles/GTI_Far')
 images_vehicle = []
 for folder in folders_vehicle:
     image_names = folder + '/*.png'
     images_vehicle = images_vehicle +  glob.glob(image_names)
 
 # Read non-vehicle folders' names
-folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/*')
-# folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/GTI')
+# folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/*')
+folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/GTI')
 images_non_vehicle = []
 for folder in folders_non_vehicle:
     image_names = folder + '/*.png'
@@ -180,11 +180,11 @@ orient = 9
 pix_per_cell = 8
 cell_per_block = 2
 spatial_size = (16, 16)
-hist_bins = 48
+hist_bins = 32
 hog_channel = "ALL" # Can be 0, 1, 2, or "ALL"
 vis = True
 
-# import ipdb; ipdb.set_trace() #
+import ipdb; ipdb.set_trace() #
 t=time.time()
 
 if vis == False:
@@ -251,7 +251,7 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
     img = img.astype(np.float32)/255
 
     img_tosearch = img[ystart:ystop,:,:]
-    ctrans_tosearch = convert_color(img_tosearch, conv='RGB2YCrCb')
+    ctrans_tosearch = convert_color(img_tosearch, color_space='HLS')
     if scale != 1:
         imshape = ctrans_tosearch.shape
         ctrans_tosearch = cv2.resize(ctrans_tosearch, (np.int(imshape[1]/scale), np.int(imshape[0]/scale)))
