@@ -264,6 +264,7 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
     nxblocks = (ch1.shape[1] // pix_per_cell)-1
     nyblocks = (ch1.shape[0] // pix_per_cell)-1
     nfeat_per_block = orient*cell_per_block**2
+
     # 64 was the orginal sampling rate, with 8 cells and 8 pix per cell
     window = 64
     nblocks_per_window = (window // pix_per_cell)-1
@@ -309,6 +310,7 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
 
     return draw_img
 
+'''
 ystart = 400
 ystop = 656
 scale = 1.5
@@ -318,3 +320,4 @@ out_img = find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_ce
 
 plt.imshow(out_img)
 plt.savefig('test1_detected.jpg')
+'''
