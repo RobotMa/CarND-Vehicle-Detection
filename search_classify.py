@@ -23,18 +23,7 @@ def single_img_features(img, color_space='RGB', spatial_size=(32, 32),
     #1) Define an empty list to receive features
     img_features = []
     #2) Apply color conversion if other than 'RGB'
-    if color_space != 'RGB':
-        if color_space == 'HSV':
-            feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-        elif color_space == 'LUV':
-            feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2LUV)
-        elif color_space == 'HLS':
-            feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
-        elif color_space == 'YUV':
-            feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2YUV)
-        elif color_space == 'YCrCb':
-            feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2YCrCb)
-    else: feature_image = np.copy(img)
+    feature_image = convert_color(img, color_space)
     #3) Compute spatial features if flag is set
     if spatial_feat == True:
         spatial_features = bin_spatial(feature_image, size=spatial_size)
@@ -166,21 +155,20 @@ def find_cars(img, y_start_stop, scale, svc, X_scaler, orient, pix_per_cell, cel
 
 # Divide up into cars and notcars
 # Read vehicle folders' names
-folders_vehicle = glob.glob('vehicles/vehicles/*')
+folders_vehicle = glob.glob('vehicles/vehicles/GTI_Far')
+# folders_vehicle = glob.glob('vehicles/vehicles/*')
 images_vehicle = []
 for folder in folders_vehicle:
     image_names = folder + '/*.png'
     images_vehicle = images_vehicle +  glob.glob(image_names)
 
 # Read non-vehicle folders' names
-folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/*')
+folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/GTI')
+# folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/*')
 images_non_vehicle = []
 for folder in folders_non_vehicle:
     image_names = folder + '/*.png'
     images_non_vehicle = images_non_vehicle +  glob.glob(image_names)
-
-# images_vehicle = glob.glob('vehicles/vehicles/GTI_Far/?????0001.png')
-# images_non_vehicle = glob.glob('non-vehicles/non-vehicles/Extras/?????1.png')
 
 cars = []
 notcars = []
@@ -191,7 +179,7 @@ for image in images_vehicle:
 for image in images_non_vehicle:
     notcars.append(image)
 
-
+# Store the info of data
 data_info = data_look(cars, notcars)
 
 print('Your function returned a count of',
