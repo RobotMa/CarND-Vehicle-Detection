@@ -184,7 +184,7 @@ hist_bins = 32
 hog_channel = "ALL" # Can be 0, 1, 2, or "ALL"
 vis = True
 
-import ipdb; ipdb.set_trace() #
+# import ipdb; ipdb.set_trace() #
 t=time.time()
 
 if vis == False:

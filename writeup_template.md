@@ -1,5 +1,4 @@
 ## Writeup Template
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
 
 ---
 
@@ -30,8 +29,6 @@ The goals / steps of this project are the following:
 ---
 ### Writeup / README
 
-#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  [Here](https://github.com/udacity/CarND-Vehicle-Detection/blob/master/writeup_template.md) is a template writeup for this project you can use as a guide and a starting point.  
-
 You're reading it!
 
 ### Histogram of Oriented Gradients (HOG)
@@ -53,7 +50,9 @@ Here is an example using the `YCrCb` color space and HOG parameters of `orientat
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of parameters and...
+Before delving into the HOG parameters, extensive experiements were performed to pick out the best color features. The best color space, number of histbin and number of spatial were picked out by running experiment in `color_classify.py`. It can be observed that LUV color space performed the best when spatial and histbin were fixed. In addition, when LUV was used with histbin fixed, spatial = 12 (16) gave the highest test accuracy in general. Moreover, histbin = 48 performed
+almost the best when spatial = 12 and LUV color spaced was used. In conclusion, an ideal color feature is LUV, spatial = 12 and histbin = 48, and this combination resulted in 96% test accuracy. The next step comes down to the selection of HOG parameters.  
+
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
