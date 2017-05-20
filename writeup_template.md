@@ -21,6 +21,7 @@ The goals / steps of this project are the following:
 [image5]: ./examples/bboxes_and_heat.png
 [image6]: ./examples/labels_map.png
 [image7]: ./examples/output_bboxes.png
+[image8]: ./test_data/TestAccuracySpatialHistbin.png
 [video1]: ./project_video.mp4
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
@@ -50,8 +51,11 @@ Here is an example using the `YCrCb` color space and HOG parameters of `orientat
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
-Before delving into the HOG parameters, extensive experiements were performed to pick out the best color features. The best color space, number of histbin and number of spatial were picked out by running experiment in `color_classify.py`. It can be observed that LUV color space performed the best when spatial and histbin were fixed. This is  In addition, when LUV was used with histbin fixed, spatial = 12 (16) gave the highest test accuracy in general. Moreover, histbin = 48 performed
-almost the best when spatial = 12 and LUV color spaced was used. In conclusion, an ideal color feature is LUV, spatial = 12 and histbin = 48, and this combination resulted in 96% test accuracy. The next step comes down to the selection of HOG parameters.  
+Before delving into the HOG parameters, extensive experiements were performed to pick out the best color features. The best color space, number of histbin and number of spatial were picked out by running experiment in `color_classify.py`. It can be observed that LUV color space performed the best when spatial and histbin were fixed. In addition, when LUV was used with histbin fixed, spatial = 12 (16) gave the highest test accuracy in general. Moreover, histbin = 48 performed almost the best when spatial = 12 and LUV color spaced was used. In conclusion, an ideal color feature is LUV, spatial = 12 and histbin = 48, and this combination resulted in 96% plus test accuracy. A complete diagram can be seen as follow. The next step comes down to the selection of HOG parameters.  
+
+![alt text][image8]
+
+Since LUV color space contains negative values and can't be applied to the built-in hog functions, several other color spaces were tested and HSV showed the highest test accuracy. Different channels of HSV were tested with fixed `pix_per_cell`, `cell_per_block` and `orient`. Each of the hog parameters was tested with the other fixed as well, and the best parameters selected were `orient = 9`, `pix_per_cell=8`, `cell_per_block=2`, and `hog_channel = "ALL"`, which achieved 99.13% test accuracy. It is observed that `pix_per_cell` andi `cell_per_block` have relatively low impact on the final test accuracy.
 
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
