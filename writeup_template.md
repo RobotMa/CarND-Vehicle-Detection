@@ -50,7 +50,7 @@ Here is an example using the `YCrCb` color space and HOG parameters of `orientat
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
-Before delving into the HOG parameters, extensive experiements were performed to pick out the best color features. The best color space, number of histbin and number of spatial were picked out by running experiment in `color_classify.py`. It can be observed that LUV color space performed the best when spatial and histbin were fixed. In addition, when LUV was used with histbin fixed, spatial = 12 (16) gave the highest test accuracy in general. Moreover, histbin = 48 performed
+Before delving into the HOG parameters, extensive experiements were performed to pick out the best color features. The best color space, number of histbin and number of spatial were picked out by running experiment in `color_classify.py`. It can be observed that LUV color space performed the best when spatial and histbin were fixed. This is  In addition, when LUV was used with histbin fixed, spatial = 12 (16) gave the highest test accuracy in general. Moreover, histbin = 48 performed
 almost the best when spatial = 12 and LUV color spaced was used. In conclusion, an ideal color feature is LUV, spatial = 12 and histbin = 48, and this combination resulted in 96% test accuracy. The next step comes down to the selection of HOG parameters.  
 
 
