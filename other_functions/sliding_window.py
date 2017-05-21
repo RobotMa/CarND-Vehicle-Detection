@@ -60,9 +60,9 @@ def slide_window(img, x_start_stop=[None, None], y_start_stop=[None, None],
     # Return the list of windows
     return window_list
 
-windows = slide_window(image, x_start_stop=[None, None], y_start_stop=[None, None],
-                    xy_window=(128, 128), xy_overlap=(0.5, 0.5))
+windows = slide_window(image, x_start_stop=[None, None], y_start_stop=[500, None],
+                    xy_window=(96, 96), xy_overlap=(0.5, 0.5))
 
 window_img = draw_boxes(image, windows, color=(0, 0, 255), thick=6)
 plt.imshow(window_img)
-plt.show(window_img)
+plt.waitforbuttonpress()
