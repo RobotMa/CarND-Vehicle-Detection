@@ -14,6 +14,7 @@ from skimage.feature import hog
 from sklearn.model_selection import train_test_split
 # from sklearn.cross_validation import train_test_split
 from sklearn.externals import joblib
+import pickle
 
 # Define a function to extract features from a list of images
 # Have this function call bin_spatial() and color_hist()
@@ -135,7 +136,7 @@ orient = 9
 pix_per_cell = 8
 cell_per_block = 2
 spatial_size = (12, 12)
-hist_bins = 32
+hist_bins = 48
 hog_channel = "ALL" # Can be 0, 1, 2, or "ALL"
 spatial_feat = True
 hist_feat = True
@@ -205,5 +206,8 @@ t2 = time.time()
 print(round(t2-t, 5), 'Seconds to predict', n_predict,'labels with SVC')
 
 # Save the trained model
+svc_param = {"scaler": X_scaler, "orient": orient, "pix_per_cell": pix_per_cell,
+        "cell_per_block": cell_per_block, "spatial_size": spatial_size, "hist_bins": hist_bins}
+pickle.dump( svc_param, open("svc_param.p", "wb"))
 joblib.dump(svc, 'trainedSVC.pkl')
 

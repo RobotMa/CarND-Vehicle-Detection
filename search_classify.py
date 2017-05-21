@@ -20,21 +20,22 @@ def single_img_features(img, color_space='RGB', spatial_size=(32, 32),
                         hist_bins=32, orient=9,
                         pix_per_cell=8, cell_per_block=2, hog_channel=0,
                         spatial_feat=True, hist_feat=True, hog_feat=True):
-    #1) Define an empty list to receive features
+    # Define an empty list to receive features
     img_features = []
-    #2) Apply color conversion if other than 'RGB'
-    feature_image = convert_color(img, color_space)
-    #3) Compute spatial features if flag is set
+    # Apply 'LUV' color conversion for spatial and hist features
+    feature_image = convert_color(img, 'LUV')
+    # Compute spatial features if flag is set
     if spatial_feat == True:
         spatial_features = bin_spatial(feature_image, size=spatial_size)
         #4) Append features to list
         img_features.append(spatial_features)
-    #5) Compute histogram features if flag is set
+    # Compute histogram features if flag is set
     if hist_feat == True:
         hist_features = color_hist(feature_image, nbins=hist_bins)
         #6) Append features to list
         img_features.append(hist_features)
-    #7) Compute HOG features if flag is set
+    # Compute HOG features if flag is set
+    feature_image = convert_color(img, color_space)
     if hog_feat == True:
         if hog_channel == 'ALL':
             hog_features = []
@@ -155,16 +156,16 @@ def find_cars(img, y_start_stop, scale, svc, X_scaler, orient, pix_per_cell, cel
 
 # Divide up into cars and notcars
 # Read vehicle folders' names
-folders_vehicle = glob.glob('vehicles/vehicles/GTI_Far')
-# folders_vehicle = glob.glob('vehicles/vehicles/*')
+# folders_vehicle = glob.glob('vehicles/vehicles/GTI_Far')
+folders_vehicle = glob.glob('vehicles/vehicles/*')
 images_vehicle = []
 for folder in folders_vehicle:
     image_names = folder + '/*.png'
     images_vehicle = images_vehicle +  glob.glob(image_names)
 
 # Read non-vehicle folders' names
-folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/GTI')
-# folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/*')
+# folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/GTI')
+folders_non_vehicle = glob.glob('non-vehicles/non-vehicles/*')
 images_non_vehicle = []
 for folder in folders_non_vehicle:
     image_names = folder + '/*.png'
@@ -193,17 +194,16 @@ print('Read {:} images of notcar'.format(len(notcars)))
 
 # Reduce the sample size because
 # The quiz evaluator times out after 13s of CPU time
-sample_size = 800
-cars = cars[0:sample_size]
-notcars = notcars[0:sample_size]
+# sample_size = 800
+# cars = cars[0:sample_size]
+# notcars = notcars[0:sample_size]
 
-### TODO: Tweak these parameters and see how the results change.
-color_space = 'HLS' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
+color_space = 'HSV' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
 orient = 9  # HOG orientations
 pix_per_cell = 8 # HOG pixels per cell
 cell_per_block = 2 # HOG cells per block
 hog_channel = "ALL" # Can be 0, 1, 2, or "ALL"
-spatial_size = (16, 16) # Spatial binning dimensions
+spatial_size = (12, 12) # Spatial binning dimensions
 hist_bins = 48    # Number of histogram bins
 spatial_feat = True # Spatial features on or off
 hist_feat = True # Histogram features on or off

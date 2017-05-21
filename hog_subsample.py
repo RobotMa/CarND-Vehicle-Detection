@@ -4,9 +4,10 @@ import numpy as np
 import pickle
 import cv2
 from lesson_functions import *
+from sklearn.externals import joblib
 
-dist_pickle = pickle.load( open("svc_pickle.p", "rb" ) )
-svc = dist_pickle["svc"]
+dist_pickle = pickle.load( open("svc_param.p", "rb" ) )
+svc = joblib.load('trainedSVC.pkl')
 X_scaler = dist_pickle["scaler"]
 orient = dist_pickle["orient"]
 pix_per_cell = dist_pickle["pix_per_cell"]
@@ -23,8 +24,7 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
     img = img.astype(np.float32)/255
 
     img_tosearch = img[ystart:ystop,:,:]
-    ctrans_tosearch = convert_color(img_tosearch, conv='RGB2YCrCb')
-    ctrans_tosearch = convert_color(img_tosearch, conv='HSV')
+    ctrans_tosearch = convert_color(img_tosearch, color_space='HSV')
     if scale != 1:
         imshape = ctrans_tosearch.shape
         ctrans_tosearch = cv2.resize(ctrans_tosearch, (np.int(imshape[1]/scale), np.int(imshape[0]/scale)))
@@ -82,7 +82,7 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
 
     return draw_img
 
-ystart = 400
+ystart = 350
 ystop = 656
 scale = 1.5
 
