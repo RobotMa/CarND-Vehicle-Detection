@@ -102,6 +102,7 @@ for folder in folders_non_vehicle:
 cars = []
 notcars = []
 
+import ipdb; ipdb.set_trace() #
 for image in images_vehicle:
     cars.append(image)
 
@@ -131,7 +132,8 @@ if subsampling == True:
 # error when using 'LUV': feature_image in the extract_feature
 # function has negative values
 # colorspace = 'LUV' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
-colorspace = 'HSV' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
+colorspace_hog = 'HSV' # Can be RGB, HSV, HLS, YUV, YCrCb
+colorspace_bin = 'LUV' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
 orient = 9
 pix_per_cell = 8
 cell_per_block = 2
@@ -146,23 +148,23 @@ vis = False
 t=time.time()
 
 if vis == False:
-    car_features = extract_features(cars, color_space=colorspace, spatial_size=spatial_size,
+    car_features = extract_features(cars, color_space=colorspace_hog, spatial_size=spatial_size,
                             hist_bins=hist_bins, orient=orient,
                             pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
                             hog_channel=hog_channel, spatial_feat=spatial_feat,
                             hist_feat=hist_feat, vis=vis)
 else:
-    car_features, car_images = extract_features_vis(cars, color_space=colorspace, orient=orient,
+    car_features, car_images = extract_features_vis(cars, color_space=colorspace_hog, orient=orient,
                                  pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
                                  hog_channel=hog_channel, vis=vis)
 if vis == False:
-    notcar_features = extract_features(notcars, color_space=colorspace, spatial_size=spatial_size,
+    notcar_features = extract_features(notcars, color_space=colorspace_hog, spatial_size=spatial_size,
                             hist_bins=hist_bins, orient=orient,
                             pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
                             hog_channel=hog_channel, spatial_feat=spatial_feat,
                             hist_feat=hist_feat, vis=vis)
 else:
-    notcar_features, notcar_images = extract_features_vis(notcars, color_space=colorspace, orient=orient,
+    notcar_features, notcar_images = extract_features_vis(notcars, color_space=colorspace_hog, orient=orient,
                             pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
                             hog_channel=hog_channel, vis=vis)
 
@@ -207,7 +209,8 @@ print(round(t2-t, 5), 'Seconds to predict', n_predict,'labels with SVC')
 
 # Save the trained model
 svc_param = {"scaler": X_scaler, "orient": orient, "pix_per_cell": pix_per_cell,
-        "cell_per_block": cell_per_block, "spatial_size": spatial_size, "hist_bins": hist_bins}
+        "cell_per_block": cell_per_block, "spatial_size": spatial_size,
+        "hist_bins": hist_bins, "colorspace_hog": colorspace_hog, "colorspace_bin": colorspace_bin}
 pickle.dump( svc_param, open("svc_param.p", "wb"))
 joblib.dump(svc, 'trainedSVC.pkl')
 

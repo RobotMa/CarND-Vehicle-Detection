@@ -54,7 +54,7 @@ def single_img_features(img, color_space='RGB', spatial_size=(32, 32),
     #9) Return concatenated array of features
     return np.concatenate(img_features)
 
-# Define a function you will pass an image
+# Define a func40on you will pass an image
 # and the list of windows to be searched (output of slide_windows())
 def search_windows(img, windows, clf, scaler, color_space='RGB',
                     spatial_size=(32, 32), hist_bins=32,
@@ -148,7 +148,6 @@ def find_cars(img, y_start_stop, scale, svc, X_scaler, orient, pix_per_cell, cel
 
             # Scale features and make a prediction
             test_features = X_scaler.transform(np.hstack((spatial_features, hist_features, hog_features)).reshape(1, -1))
-            #test_features = X_scaler.transform(np.hstack((shape_feat, hist_feat)).reshape(1, -1))
             test_prediction = svc.predict(test_features)
 
             if test_prediction == 1:
@@ -167,9 +166,9 @@ pix_per_cell = dist_pickle["pix_per_cell"]
 cell_per_block = dist_pickle["cell_per_block"]
 spatial_size = dist_pickle["spatial_size"]
 hist_bins = dist_pickle["hist_bins"]
+color_space = dist_pickle["colorspace_hog"]
 
 hog_channel = "ALL"
-color_space = 'HSV'
 spatial_feat = True
 hist_feat = True
 hog_feat = True
@@ -194,7 +193,6 @@ image = image.astype(np.float32)/255
 # sliding_window approach
 windows = slide_window(image, x_start_stop=[None, None], y_start_stop=y_start_stop,
                     xy_window=(96, 96), xy_overlap=(0.5, 0.5))
-
 hot_windows = search_windows(image, windows, svc, X_scaler, color_space=color_space,
                         spatial_size=spatial_size, hist_bins=hist_bins,
                         orient=orient, pix_per_cell=pix_per_cell,
