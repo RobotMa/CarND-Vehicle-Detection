@@ -179,7 +179,7 @@ image = mpimg.imread('test_images/test1.jpg')
 draw_image = np.copy(image)
 
 # find_car approach
-scale = 1
+scale = 1.5
 out_img = find_cars(image, y_start_stop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins, color_space)
 
 plt.imshow(out_img)
