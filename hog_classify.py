@@ -4,8 +4,8 @@ import numpy as np
 import cv2
 import glob
 import time
-from lesson_functions import data_look, get_hog_features, bin_spatial, color_hist, convert_color
-from lesson_functions import extract_features
+from lesson_functions import (data_look, get_hog_features, bin_spatial, color_hist, convert_color,
+extract_features)
 from sklearn.svm import LinearSVC
 from sklearn.preprocessing import StandardScaler
 from skimage.feature import hog
@@ -13,10 +13,11 @@ from skimage.feature import hog
 # for scikit-learn >= 0.18 use:
 from sklearn.model_selection import train_test_split
 # from sklearn.cross_validation import train_test_split
-'''
+from sklearn.externals import joblib
+
 # Define a function to extract features from a list of images
 # Have this function call bin_spatial() and color_hist()
-def extract_features(imgs, color_space='RGB', orient=9,
+def extract_features_vis(imgs, color_space='RGB', orient=9,
                         pix_per_cell=8, cell_per_block=2, hog_channel=0, vis=False):
     # Create a list to append feature vectors to
     features = []
@@ -78,7 +79,7 @@ def extract_features(imgs, color_space='RGB', orient=9,
         return features
     else:
         return features, hog_images
-'''
+
 
 # Divide up into cars and notcars
 # Read vehicle folders' names
@@ -126,8 +127,7 @@ if subsampling == True:
     cars = cars[0:sample_size]
     notcars = notcars[0:sample_size]
 
-### TODO: Tweak these parameters and see how the results change.
-# bug  when using 'LUV': feature_image in the extract_feature
+# error when using 'LUV': feature_image in the extract_feature
 # function has negative values
 # colorspace = 'LUV' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
 colorspace = 'HSV' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
@@ -151,7 +151,7 @@ if vis == False:
                             hog_channel=hog_channel, spatial_feat=spatial_feat,
                             hist_feat=hist_feat, vis=vis)
 else:
-    car_features, car_images = extract_features(cars, color_space=colorspace, orient=orient,
+    car_features, car_images = extract_features_vis(cars, color_space=colorspace, orient=orient,
                                  pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
                                  hog_channel=hog_channel, vis=vis)
 if vis == False:
@@ -161,7 +161,7 @@ if vis == False:
                             hog_channel=hog_channel, spatial_feat=spatial_feat,
                             hist_feat=hist_feat, vis=vis)
 else:
-    notcar_features, notcar_images = extract_features(notcars, color_space=colorspace, orient=orient,
+    notcar_features, notcar_images = extract_features_vis(notcars, color_space=colorspace, orient=orient,
                             pix_per_cell=pix_per_cell, cell_per_block=cell_per_block,
                             hog_channel=hog_channel, vis=vis)
 
@@ -204,6 +204,8 @@ print('For these',n_predict, 'labels: ', y_test[0:n_predict])
 t2 = time.time()
 print(round(t2-t, 5), 'Seconds to predict', n_predict,'labels with SVC')
 
+# Save the trained model
+joblib.dump(svc, 'trainedSVC.pkl')
 
 # Define a single function that can extract features using hog sub-sampling and make predictions
 def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins):
