@@ -36,9 +36,9 @@ You're reading it!
 
 #### 1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
-The code for this step is contained in the first code cell of the IPython notebook (or in lines # through # of the file called `some_file.py`).  
+The code for this step is contained in file called `hog_classify.py`. Note that all of the core functions are included through the file called `lesson_function.py` and this is also true for the later tests and pipeline.  
 
-I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
+In the `hog_classify.py` file, I started by reading in all the `vehicle` and `non-vehicle` images.  Data augmentation is employed by flipping both the vehicle and non-vehicle images from the given data set as in the file `augment_data.py`. Note that this file needs to run for only once. The final non-vehicle data set has the folders `Extras`, `GTI`, `Extras_flipped` and `GTI_flipped`. THe final vehicle data set constains the folders `GTI_far`, `GTI_Left`, `GTI_MiddleClose`, `GTI_Right`, `KITTI` and their flipped counterparts. The final data set gives a total of 17939 non-vehicle images and 17590 vehicle images. Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
 ![alt text][image1]
 

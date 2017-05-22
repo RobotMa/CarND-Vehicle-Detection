@@ -6,7 +6,7 @@ from collections import deque
 
 class HeatMap:
     def __init__(self):
-        self.heat_map = deque(maxlen=20)
+        self.heat_map = deque(maxlen=15)
 
 # Pipeline to detect the vehicles in a video clip
 def pipeline(image):
@@ -72,17 +72,19 @@ if __name__ == "__main__":
     # Parameters for efficient sliding window search
     s1 = 64
     s2 = 96
-    s3 = 160
-    s4 = 128
+    s3 = 128
+    s4 = 160
     amp = 1.3
-    rate = 0.8
+    rate1 = 0.85
+    rate2 = 0.8
+    rate3 = 0.7
     xy_window_list = [(s1, s1), (s2, s2), (s3, s3), (s4, s4)]
     x_start_stop_list = [[None, None],[None, None],[None, None], [None, None]]
     y_start_stop_list = [[400, 400 + int(amp*s1)],[400, 400 + int(amp*s2)],
                         [400, 400 + int(amp*s3)], [400, 400 + int(amp*s4)]]
-    xy_overlap_list = [(rate, rate), (rate, rate), (rate, rate), (rate, rate)]
+    xy_overlap_list = [(rate1, rate1), (rate1, rate1), (rate2, rate2), (rate3, rate3)]
 
-    opt = 1
+    opt = 3
     if opt == 1:
         video = 'detected_test_video.mp4'
         clip = VideoFileClip("test_video.mp4")
@@ -92,6 +94,18 @@ if __name__ == "__main__":
     elif opt == 2:
         video = 'detected_project_video.mp4'
         clip = VideoFileClip("project_video.mp4")
+        completed_clip = clip.fl_image(pipeline)
+        completed_clip.write_videofile(video, audio=False)
+
+    elif opt == 3:
+        video = 'debug_project_video_43_46.mp4'
+        clip = VideoFileClip("project_video.mp4").subclip(43, 46)
+        completed_clip = clip.fl_image(pipeline)
+        completed_clip.write_videofile(video, audio=False)
+
+    elif opt == 4:
+        video = 'debug_project_video_7_8.mp4'
+        clip = VideoFileClip("project_video.mp4").subclip(7, 8)
         completed_clip = clip.fl_image(pipeline)
         completed_clip.write_videofile(video, audio=False)
 
