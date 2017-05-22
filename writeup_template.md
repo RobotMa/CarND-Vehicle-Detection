@@ -36,15 +36,15 @@ You're reading it!
 
 #### 1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
-The code for this step is contained in file called `hog_classify.py`. Note that all of the core functions are included through the file called `lesson_function.py` and this is also true for the later tests and pipeline.  
+The code for this step is contained from line 85 to 169 in the file called `hog_classify.py`. Note that all of the core functions are included through the file called `lesson_function.py` and this is also true for the later tests and pipeline.  
 
-In the `hog_classify.py` file, I started by reading in all the `vehicle` and `non-vehicle` images.  Data augmentation is employed by flipping both the vehicle and non-vehicle images from the given data set as in the file `augment_data.py`. Note that this file needs to run for only once. The final non-vehicle data set has the folders `Extras`, `GTI`, `Extras_flipped` and `GTI_flipped`. THe final vehicle data set constains the folders `GTI_far`, `GTI_Left`, `GTI_MiddleClose`, `GTI_Right`, `KITTI` and their flipped counterparts. The final data set gives a total of 17939 non-vehicle images and 17590 vehicle images. Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
+In the `hog_classify.py` file, I started by reading in all the `vehicle` and `non-vehicle` images.  Data augmentation is employed by flipping both the vehicle and non-vehicle images from the given data set as in the file `augment_data.py`. Note that this file needs to run for only once. The final non-vehicle data set has the folders `Extras`, `GTI`, `Extras_flipped` and `GTI_flipped`. THe final vehicle data set constains the folders `GTI_far`, `GTI_Left`, `GTI_MiddleClose`, `GTI_Right`, `KITTI` and their flipped counterparts. The final data set gives a total of 17939 non-vehicle images and 17590 vehicle images. The augmented data set resulted in a better trained classifier on the test images. Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
 ![alt text][image1]
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
-Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
+Here is an example using the `HSV` color space and HOG parameters of `orientations=9`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
 
 
 ![alt text][image2]
@@ -55,12 +55,12 @@ Before delving into the HOG parameters, extensive experiements were performed to
 
 ![alt text][image8]
 
-Since LUV color space contains negative values and can't be applied to the built-in hog functions, several other color spaces were tested and HSV showed the highest test accuracy. Different channels of HSV were tested with fixed `pix_per_cell`, `cell_per_block` and `orient`. Each of the hog parameters was tested with the other fixed as well, and the best parameters selected were `orient = 9`, `pix_per_cell=8`, `cell_per_block=2`, and `hog_channel = "ALL"`, which achieved 99.13% test accuracy. It is observed that `pix_per_cell` andi `cell_per_block` have relatively low impact on the final test accuracy.
+Since LUV color space contains negative values and can't be applied to the built-in hog functions, several other color spaces were tested and HSV showed the highest test accuracy. Spatial and histbin features were included as well but under the `LUV` color space for their best performance.Different channels of HSV were tested with fixed `pix_per_cell`, `cell_per_block` and `orient`. Each of the hog parameters was tested with the other fixed as well, and the best parameters selected were `orient = 9`, `pix_per_cell=8`, `cell_per_block=2`, and `hog_channel = "ALL"`, which achieved 99.13% test accuracy. It is observed that `pix_per_cell` andi `cell_per_block` have relatively low impact on the final test accuracy.
 
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I trained a linear SVM using...
+I trained a linear SVM using the augmented data set with features of spatial and histbin under `LUV` colorspace and hog under `HSV` colorspace. This part was done as in Line 171 to 216 in `hog_classify.py` as the trained linear SVC along its parameters were saved as pickle files.
 
 ### Sliding Window Search
 

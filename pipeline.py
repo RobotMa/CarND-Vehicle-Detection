@@ -74,15 +74,16 @@ if __name__ == "__main__":
     s2 = 96
     s3 = 128
     s4 = 160
-    amp = 1.3
+    amp = 1.2
     rate1 = 0.85
     rate2 = 0.8
     rate3 = 0.7
+    rate4 = 0.6
     xy_window_list = [(s1, s1), (s2, s2), (s3, s3), (s4, s4)]
     x_start_stop_list = [[None, None],[None, None],[None, None], [None, None]]
     y_start_stop_list = [[400, 400 + int(amp*s1)],[400, 400 + int(amp*s2)],
                         [400, 400 + int(amp*s3)], [400, 400 + int(amp*s4)]]
-    xy_overlap_list = [(rate1, rate1), (rate1, rate1), (rate2, rate2), (rate3, rate3)]
+    xy_overlap_list = [(rate1, rate1), (rate2, rate2), (rate3, rate3), (rate4, rate4)]
 
     opt = 3
     if opt == 1:
