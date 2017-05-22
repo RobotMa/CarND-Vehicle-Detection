@@ -27,9 +27,9 @@ images_names = glob.glob('test_images/*.jpg')
 
 s1 = 64
 s2 = 96
-s3 = 2*96
+s3 = 128
 s4 = 128
-amp = 1.5
+amp = 1.2
 rate = 0.8
 '''
 xy_window_list = [(s1, s1), (s2, s2), (s3, s3)]
