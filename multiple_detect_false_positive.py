@@ -25,24 +25,26 @@ hog_feat = True
 
 images_names = glob.glob('test_images/*.jpg')
 
+# Parameters for efficient sliding window search
 s1 = 64
 s2 = 96
 s3 = 128
-s4 = 128
+s4 = 160
 amp = 1.2
-rate = 0.8
-'''
-xy_window_list = [(s1, s1), (s2, s2), (s3, s3)]
-x_start_stop_list = [[None, None],[None, None],[None, None]]
-y_start_stop_list = [[400, 400 + int(amp*s1)],[400, 400 + int(amp*s2)],[400, 400 + int(amp*s3)]]
-xy_overlap_list = [(rate, rate), (rate, rate), (rate, rate)]
-'''
-
+rate1 = 0.85
+rate2 = 0.8
+rate3 = 0.7
+rate4 = 0.6
 xy_window_list = [(s1, s1), (s2, s2), (s3, s3), (s4, s4)]
 x_start_stop_list = [[None, None],[None, None],[None, None], [None, None]]
 y_start_stop_list = [[400, 400 + int(amp*s1)],[400, 400 + int(amp*s2)],
-                        [400, 400 + int(amp*s3)], [400, 400 + int(amp*s4)]]
-xy_overlap_list = [(rate, rate), (rate, rate), (rate, rate), (rate, rate)]
+                    [400, 400 + int(amp*s3)], [400, 400 + int(amp*s4)]]
+xy_overlap_list = [(rate1, rate1), (rate2, rate2), (rate3, rate3), (rate4, rate4)]
+
+
+fig = plt.subplot(6, 2, figsize = (12,12))
+ind = 0
+ind_start = 620 # 6 rows and 2 columns fig
 
 for image_name in images_names:
 
@@ -81,16 +83,29 @@ for image_name in images_names:
     labels = label(heatmap)
     draw_img = draw_labeled_bboxes(np.copy(image), labels)
 
-    fig = plt.figure()
-    plt.subplot(121)
+    ind = ind + 1
+    ind_2 = ind*2
+    ind_1 = ind_2 - 1
+
+    if ind_2 < 10:
+        ind_start_1 = ind_start + ind_1
+        ind_start_2 = ind_start + ind_2
+    else:
+        ind_start_1 = 10*ind_start + ind_1
+        ind_start_2 = 10*ind_start + ind_2
+
+    print(ind_start_2)
+    plt.add_subplot(6, 2, ind_1)
     plt.imshow(draw_img)
     plt.title('Car Positions')
-    plt.subplot(122)
+    plt.add_subplot(6, 2, ind_2)
     plt.imshow(heatmap, cmap='hot')
     plt.title('Heat Map')
     fig.tight_layout()
 
-    pure_image_name = image_name.rsplit('/',1)[1]
-    output_image_name = 'output_images/' + pure_image_name[:-4] + '_heated' + pure_image_name[-4:]
-    plt.savefig(output_image_name)
+    # pure_image_name = image_name.rsplit('/',1)[1]
+    # output_image_name = 'output_images/' + pure_image_name[:-4] + '_heated' + pure_image_name[-4:]
+
+output_image_name = 'output_images/bouding_boxes_and_heatmap.png'
+plt.savefig(output_image_name)
 
