@@ -23,7 +23,7 @@ hog_feat = True
 y_start_stop = [400, 650] # Min and max in y to search in slide_window()
 
 #image = mpimg.imread('bbox-example-image.jpg')
-image = mpimg.imread('test_images/test1.jpg')
+image = mpimg.imread('test_images/test2.jpg')
 draw_image = np.copy(image)
 
 # find_car approach
