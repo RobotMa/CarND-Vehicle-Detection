@@ -62,12 +62,14 @@ if __name__ == "__main__":
     s1 = 64
     s2 = 96
     s3 = 2*96
+    s4 = 128
     amp = 1.5
     rate = 0.8
-    xy_window_list = [(s1, s1), (s2, s2), (s3, s3)]
-    x_start_stop_list = [[None, None],[None, None],[None, None]]
-    y_start_stop_list = [[400, 400 + int(amp*s1)],[400, 400 + int(amp*s2)],[400, 400 + int(amp*s3)]]
-    xy_overlap_list = [(rate, rate), (rate, rate), (rate, rate)]
+    xy_window_list = [(s1, s1), (s2, s2), (s3, s3), (s4, s4)]
+    x_start_stop_list = [[None, None],[None, None],[None, None], [None, None]]
+    y_start_stop_list = [[400, 400 + int(amp*s1)],[400, 400 + int(amp*s2)],
+                        [400, 400 + int(amp*s3)], [400, 400 + int(amp*s4)]]
+    xy_overlap_list = [(rate, rate), (rate, rate), (rate, rate), (rate, rate)]
 
 
     video = 'detected_test_video.mp4'
