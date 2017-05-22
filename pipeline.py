@@ -2,6 +2,11 @@ from moviepy.editor import VideoFileClip
 from lesson_functions import *
 import pickle
 from sklearn.externals import joblib
+from collections import deque
+
+class HeatMap:
+    def __init__(self):
+        self.heat_map = deque(maxlen=20)
 
 # Pipeline to detect the vehicles in a video clip
 def pipeline(image):
@@ -24,6 +29,10 @@ def pipeline(image):
 
     # Add heat to each box in box list
     heat = add_heat(heat, hot_windows)
+
+    Heat_Map.heat_map.append(heat)
+
+    heat = np.mean(Heat_Map.heat_map, 0)
 
     # Apply threshold to help remove false positives
     heat = apply_threshold(heat,2)
@@ -58,10 +67,12 @@ if __name__ == "__main__":
     hist_feat = True
     hog_feat = True
 
+    Heat_Map = HeatMap()
+
     # Parameters for efficient sliding window search
     s1 = 64
     s2 = 96
-    s3 = 2*96
+    s3 = 160
     s4 = 128
     amp = 1.3
     rate = 0.8
@@ -71,7 +82,7 @@ if __name__ == "__main__":
                         [400, 400 + int(amp*s3)], [400, 400 + int(amp*s4)]]
     xy_overlap_list = [(rate, rate), (rate, rate), (rate, rate), (rate, rate)]
 
-    opt = 2
+    opt = 1
     if opt == 1:
         video = 'detected_test_video.mp4'
         clip = VideoFileClip("test_video.mp4")
