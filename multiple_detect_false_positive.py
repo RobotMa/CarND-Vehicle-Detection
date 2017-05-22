@@ -6,12 +6,14 @@ import cv2
 from scipy.ndimage.measurements import label
 
 # Read in a pickle file with bboxes saved
-# Each item in the "all_bboxes" list will contain a 
+# Each item in the "all_bboxes" list will contain a
 # list of boxes for one of the images shown above
 box_list = pickle.load( open( "bbox_pickle.p", "rb" ))
 
-# Read in image similar to one shown above 
-image = mpimg.imread('test_image.jpg')
+# Read in image similar to one shown above
+image = mpimg.imread('bbox-example-image.jpg')
+#image = mpimg.imread('test_images/test1.jpg')
+#image = mpimg.imread('test_image.jpg')
 heat = np.zeros_like(image[:,:,0]).astype(np.float)
 
 def add_heat(heatmap, bbox_list):
@@ -23,7 +25,7 @@ def add_heat(heatmap, bbox_list):
 
     # Return updated heatmap
     return heatmap# Iterate through list of bboxes
-    
+
 def apply_threshold(heatmap, threshold):
     # Zero out pixels below the threshold
     heatmap[heatmap <= threshold] = 0
@@ -47,11 +49,11 @@ def draw_labeled_bboxes(img, labels):
 
 # Add heat to each box in box list
 heat = add_heat(heat,box_list)
-    
+
 # Apply threshold to help remove false positives
 heat = apply_threshold(heat,1)
 
-# Visualize the heatmap when displaying    
+# Visualize the heatmap when displaying
 heatmap = np.clip(heat, 0, 255)
 
 # Find final boxes from heatmap using label function
@@ -66,4 +68,5 @@ plt.subplot(122)
 plt.imshow(heatmap, cmap='hot')
 plt.title('Heat Map')
 fig.tight_layout()
+plt.savefig('heatmap-bbox-example-image-detected.jpg')
 
