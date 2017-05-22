@@ -35,7 +35,7 @@ def pipeline(image):
     heat = np.mean(Heat_Map.heat_map, 0)
 
     # Apply threshold to help remove false positives
-    heat = apply_threshold(heat,2)
+    heat = apply_threshold(heat,2.3)
 
     # Visualize the heatmap when displaying
     heatmap = np.clip(heat, 0, 255)
@@ -85,7 +85,7 @@ if __name__ == "__main__":
                         [400, 400 + int(amp*s3)], [400, 400 + int(amp*s4)]]
     xy_overlap_list = [(rate1, rate1), (rate2, rate2), (rate3, rate3), (rate4, rate4)]
 
-    opt = 3
+    opt = 2
     if opt == 1:
         video = 'detected_test_video.mp4'
         clip = VideoFileClip("test_video.mp4")
