@@ -22,8 +22,8 @@ hist_feat = True
 hog_feat = True
 y_start_stop = [400, 650] # Min and max in y to search in slide_window()
 
-image = mpimg.imread('bbox-example-image.jpg')
-#image = mpimg.imread('test_images/test1.jpg')
+#image = mpimg.imread('bbox-example-image.jpg')
+image = mpimg.imread('test_images/test1.jpg')
 draw_image = np.copy(image)
 
 # find_car approach
@@ -36,10 +36,15 @@ plt.savefig('find-car-bbox-example-image-detected.jpg')
 # Uncomment the following line if you extracted training
 # data from .png images (scaled 0 to 1 by mpimg) and the
 # image you are searching is a .jpg (scaled 0 to 255)
-xy_window_list = [(64, 64), (96, 96), (2*96, 2*96)]
+s1 = 64
+s2 = 96
+s3 = 2*96
+amp = 1.5
+rate = 0.8
+xy_window_list = [(s1, s1), (s2, s2), (s3, s3)]
 x_start_stop_list = [[None, None],[None, None],[None, None]]
-y_start_stop_list = [[400, 650],[400, 650],[400, 650]]
-xy_overlap_list = [(0.7, 0.7), (0.7, 0.7), (0.7, 0.7)]
+y_start_stop_list = [[400, 400 + int(amp*s1)],[400, 400 + int(amp*s2)],[400, 400 + int(amp*s3)]]
+xy_overlap_list = [(rate, rate), (rate, rate), (rate, rate)]
 
 windows = multiple_windows(image, xy_window_list, x_start_stop_list, y_start_stop_list,
                            xy_overlap_list)

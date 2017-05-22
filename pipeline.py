@@ -18,9 +18,25 @@ def pipeline(image):
                             hog_channel=hog_channel, spatial_feat=spatial_feat,
                             hist_feat=hist_feat, hog_feat=hog_feat)
 
-    window_img = draw_boxes(draw_image, hot_windows, color=(0, 0, 255), thick=6)
+    heat = np.zeros_like(image[:,:,0]).astype(np.float)
 
-    return window_img
+    # window_img = draw_boxes(draw_image, hot_windows, color=(0, 0, 255), thick=6)
+
+    # Add heat to each box in box list
+    heat = add_heat(heat, hot_windows)
+
+    # Apply threshold to help remove false positives
+    heat = apply_threshold(heat,1)
+
+    # Visualize the heatmap when displaying
+    heatmap = np.clip(heat, 0, 255)
+
+    # Find final boxes from heatmap using label function
+    labels = label(heatmap)
+
+    draw_img = draw_labeled_bboxes(np.copy(image), labels)
+
+    return draw_img
 
 if __name__ == "__main__":
 
@@ -42,10 +58,16 @@ if __name__ == "__main__":
     hist_feat = True
     hog_feat = True
 
-    xy_window_list = [(64, 64), (96, 96), (2*96, 2*96)]
+    # Parameters for efficient sliding window search
+    s1 = 64
+    s2 = 96
+    s3 = 2*96
+    amp = 1.5
+    rate = 0.8
+    xy_window_list = [(s1, s1), (s2, s2), (s3, s3)]
     x_start_stop_list = [[None, None],[None, None],[None, None]]
-    y_start_stop_list = [[400, 650],[400, 650],[400, 650]]
-    xy_overlap_list = [(0.7, 0.7), (0.7, 0.7), (0.7, 0.7)]
+    y_start_stop_list = [[400, 400 + int(amp*s1)],[400, 400 + int(amp*s2)],[400, 400 + int(amp*s3)]]
+    xy_overlap_list = [(rate, rate), (rate, rate), (rate, rate)]
 
 
     video = 'detected_test_video.mp4'
