@@ -10,10 +10,14 @@ The goals / steps of this project are the following:
 * Estimate a bounding box for vehicles detected.
 
 [//]: # (Image References)
-[image1]: ./examples/car_not_car.png
+[image0]: ./output_images/vehicle.png
+[image1]: ./output_images/non_vehicle.png
 [image2]: ./examples/HOG_example.jpg
-[image3]: ./examples/sliding_windows.jpg
-[image4]: ./examples/sliding_window.jpg
+[image3]: ./output_images/sliding_windows.jpg "Sliding Windows"
+[image41]: ./output_images/bbox_test1.jpg
+[image42]: ./output_images/bbox_test3.jpg
+[image43]: ./output_images/bbox_test4.jpg
+[image44]: ./output_images/bbox_test5.jpg
 [image5]: ./examples/bboxes_and_heat.png
 [image6]: ./examples/labels_map.png
 [image7]: ./examples/output_bboxes.png
@@ -34,9 +38,11 @@ You're reading it!
 
 The code for this step is contained from line 85 to 169 in the file called `hog_classify.py`. Note that all of the core functions are included through the file called `lesson_function.py` and this is also true for the later tests and pipeline.  
 
-In the `hog_classify.py` file, I started by reading in all the `vehicle` and `non-vehicle` images.  Data augmentation is employed by flipping both the vehicle and non-vehicle images from the given data set as in the file `augment_data.py`. Note that this file needs to run for only once. The final non-vehicle data set has the folders `Extras`, `GTI`, `Extras_flipped` and `GTI_flipped`. THe final vehicle data set constains the folders `GTI_far`, `GTI_Left`, `GTI_MiddleClose`, `GTI_Right`, `KITTI` and their flipped counterparts. The final data set gives a total of 17939 non-vehicle images and 17590 vehicle images. The augmented data set resulted in a better trained classifier on the test images. Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
+In the `hog_classify.py` file, I started by reading in all the `vehicle` and `non-vehicle` images.  Data augmentation is employed by flipping both the vehicle and non-vehicle images from the given data set as in the file `augment_data.py`. Note that this file needs to run for only once. The final non-vehicle data set has the folders `Extras`, `GTI`, `Extras_flipped` and `GTI_flipped`. The final vehicle data set constains the folders `GTI_far`, `GTI_Left`, `GTI_MiddleClose`, `GTI_Right`, `KITTI` and their flipped counterparts. The final data set gives a total of 17939 non-vehicle images and 17590 vehicle images. The augmented data set resulted in a better trained classifier on the test images in the folder `test_images`. Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
-![alt text][image1]
+Vehicle                    |   non-vehicle
+:-------------------------:|:-------------------------:
+![alt_text][image0]        |  ![alt_text][image1]
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
@@ -51,27 +57,36 @@ Before delving into the HOG parameters, extensive experiements were performed to
 
 ![alt text][image8]
 
-Since LUV color space contains negative values and can't be applied to the built-in hog functions, several other color spaces were tested and HSV showed the highest test accuracy. Spatial and histbin features were included as well but under the `LUV` color space for their best performance.Different channels of HSV were tested with fixed `pix_per_cell`, `cell_per_block` and `orient`. Each of the hog parameters was tested with the other fixed as well, and the best parameters selected were `orient = 9`, `pix_per_cell=8`, `cell_per_block=2`, and `hog_channel = "ALL"`, which achieved 99.13% test accuracy. It is observed that `pix_per_cell` andi `cell_per_block` have relatively low impact on the final test accuracy.
+Since LUV color space contains negative values and can't be applied to the built-in hog functions, several other color spaces were tested and HSV showed the highest test accuracy. Spatial and histbin features were included as well but under the `LUV` color space for their best performance.  Different channels of HSV were tested with fixed `pix_per_cell`, `cell_per_block` and `orient`. All of the features were normalized before training the classifier. Each of the hog parameters was tested with the other fixed as well, and the best parameters selected were `orient = 9`, `pix_per_cell=8`, `cell_per_block=2`, and `hog_channel = "ALL"`, which achieved 99.13% test accuracy. It is observed that `pix_per_cell` andi `cell_per_block` have relatively low impact on the final test accuracy.
 
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
     
 I trained a linear SVM using the augmented data set with features of spatial and histbin under `LUV` colorspace and hog under `HSV` colorspace. This part was done from Line 171 to 216 in `hog_classify.py` and the trained linear SVC along its parameters were saved as pickle files. The classifier can achieve 99% plus test accuracy repeatedly which reflected its good performance. However, false positives can still be detected in the video processing, and this can be mitigated by
-introducing a bigger data set and deep learning based classifier, but using heatmap for filtering the false positive given time series images performed well enough which will be shown later.
+introducing a bigger data set or deep learning based classifier. However, using heatmap for filtering the false positive given time series images performed well enough which will be shown later.
 
 ### Sliding Window Search
 
 #### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-Many experiments were performed to tune the parameters for sliding window search. As shown from line 72 to 86 in the file named `pipeline.py`, four different sizes of sliding windows were defined along with their overlap rates, and area to search. The basic principle is to design windows that has significantly different sizes to cover potential smaller vehicles near the horizon and larger vehicles close to the bottom of the image. 
+Many experiments were performed to tune the parameters for sliding window search. As shown from line 72 to 86 in the file named `pipeline.py`, four different sizes of sliding windows were defined along with their overlap rates and the area to search. The basic principle is to design windows that has significantly different sizes to cover potential smaller vehicles near the horizon and larger vehicles close to the bottom of the image. A visualization of the sliding windows can be seen
+as follows:
 
 ![alt text][image3]
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
  
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+Ultimately I searched on four sizes of window using HSV all-channel HOG features plus spatially binned color and histograms of color (LUV colorspace as mentioned before) in the feature vector, which provided a nice result. Note that not any false positive filtering technique was employed for the following four examples, and the false positive in the 4th image can be easily filtered using the technique that will be introduced in the next section. Here are the example images:
 
-![alt text][image4]
+Example 1                  |   Example 2
+:-------------------------:|:-------------------------:
+![alt_text][image41]       |  ![alt_text][image42]
+
+Example 3                  |   Example 4
+:-------------------------:|:-------------------------:
+![alt_text][image43]       |  ![alt_text][image44]
+
+
 ---
 
 ### Video Implementation

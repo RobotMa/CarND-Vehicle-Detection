@@ -23,31 +23,39 @@ hog_feat = True
 y_start_stop = [400, 650] # Min and max in y to search in slide_window()
 
 #image = mpimg.imread('bbox-example-image.jpg')
-image = mpimg.imread('test_images/test2.jpg')
+image = mpimg.imread('test_images/test5.jpg')
 draw_image = np.copy(image)
 
 # find_car approach
 scale = 1.5
 out_img = find_cars(image, y_start_stop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins, color_space)
 
-plt.imshow(out_img)
-plt.savefig('find-car-bbox-example-image-detected.jpg')
+# plt.imshow(out_img)
+# plt.savefig('find-car-bbox-example-image-detected.jpg')
 
-# Uncomment the following line if you extracted training
-# data from .png images (scaled 0 to 1 by mpimg) and the
-# image you are searching is a .jpg (scaled 0 to 255)
+# Parameters for efficient sliding window search
 s1 = 64
 s2 = 96
-s3 = 2*96
-amp = 1.5
-rate = 0.8
-xy_window_list = [(s1, s1), (s2, s2), (s3, s3)]
-x_start_stop_list = [[None, None],[None, None],[None, None]]
-y_start_stop_list = [[400, 400 + int(amp*s1)],[400, 400 + int(amp*s2)],[400, 400 + int(amp*s3)]]
-xy_overlap_list = [(rate, rate), (rate, rate), (rate, rate)]
+s3 = 128
+s4 = 160
+amp = 1.2
+rate1 = 0.85
+rate2 = 0.8
+rate3 = 0.7
+rate4 = 0.6
+xy_window_list = [(s1, s1), (s2, s2), (s3, s3), (s4, s4)]
+x_start_stop_list = [[None, None],[None, None],[None, None], [None, None]]
+y_start_stop_list = [[400, 400 + int(amp*s1)],[400, 400 + int(amp*s2)],
+                    [400, 400 + int(amp*s3)], [400, 400 + int(amp*s4)]]
+xy_overlap_list = [(rate1, rate1), (rate2, rate2), (rate3, rate3), (rate4, rate4)]
 
 windows = multiple_windows(image, xy_window_list, x_start_stop_list, y_start_stop_list,
                            xy_overlap_list)
+
+# Plot the sliding windows
+sliding_window_img = draw_boxes(draw_image, windows, color=(0, 0, 255), thick=6)
+# plt.imshow(sliding_window_img)
+# plt.savefig('output_images/sliding_windows.jpg', bbox_inches='tight')
 
 hot_windows = search_windows(image, windows, svc, X_scaler, color_space=color_space,
                         spatial_size=spatial_size, hist_bins=hist_bins,
@@ -61,5 +69,5 @@ window_img = draw_boxes(draw_image, hot_windows, color=(0, 0, 255), thick=6)
 pickle.dump(hot_windows,  open("bbox_pickle.p", "wb"))
 
 plt.imshow(window_img)
-plt.savefig('search-window-bbox-example-image-detected.jpg')
+plt.savefig('output_images/bbox_test5.jpg', bbox_inches='tight')
 
