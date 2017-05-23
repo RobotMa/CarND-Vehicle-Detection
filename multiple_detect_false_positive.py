@@ -7,6 +7,7 @@ from scipy.ndimage.measurements import label
 from lesson_functions import *
 from sklearn.externals import joblib
 import glob
+from collections import deque
 
 dist_pickle = pickle.load( open("svc_param.p", "rb" ) )
 svc = joblib.load('trainedSVC.pkl')
@@ -23,14 +24,14 @@ spatial_feat = True
 hist_feat = True
 hog_feat = True
 
-images_names = glob.glob('test_images/*.jpg')
+images_names = glob.glob('test_images/project*.png')
 
 # Parameters for efficient sliding window search
 s1 = 64
 s2 = 96
 s3 = 128
 s4 = 160
-amp = 1.2
+amp = 1.4
 rate1 = 0.85
 rate2 = 0.8
 rate3 = 0.7
@@ -42,9 +43,10 @@ y_start_stop_list = [[400, 400 + int(amp*s1)],[400, 400 + int(amp*s2)],
 xy_overlap_list = [(rate1, rate1), (rate2, rate2), (rate3, rate3), (rate4, rate4)]
 
 
-fig = plt.subplot(6, 2, figsize = (12,12))
+fig, ax = plt.subplots(6, 2, figsize = (12,24))
 ind = 0
-ind_start = 620 # 6 rows and 2 columns fig
+
+heat_deque = deque(maxlen=6)
 
 for image_name in images_names:
 
@@ -64,8 +66,8 @@ for image_name in images_names:
 
     window_img = draw_boxes(draw_image, hot_windows, color=(0, 0, 255), thick=6)
 
-    plt.imshow(window_img)
-    plt.savefig('search-window-bbox-example-image-detected.jpg')
+    # plt.imshow(window_img)
+    # plt.savefig('search-window-bbox-example-image-detected.jpg')
 
     # Read in image similar to one shown above
     heat = np.zeros_like(image[:,:,0]).astype(np.float)
@@ -73,8 +75,10 @@ for image_name in images_names:
     # Add heat to each box in box list
     heat = add_heat(heat, hot_windows)
 
+    heat_deque.append(heat)
+
     # Apply threshold to help remove false positives
-    heat = apply_threshold(heat,2)
+    heat = apply_threshold(heat,2.3)
 
     # Visualize the heatmap when displaying
     heatmap = np.clip(heat, 0, 255)
@@ -87,25 +91,38 @@ for image_name in images_names:
     ind_2 = ind*2
     ind_1 = ind_2 - 1
 
-    if ind_2 < 10:
-        ind_start_1 = ind_start + ind_1
-        ind_start_2 = ind_start + ind_2
-    else:
-        ind_start_1 = 10*ind_start + ind_1
-        ind_start_2 = 10*ind_start + ind_2
+    # Save the last image
+    if ind == 6:
+        final_image = np.copy(image)
 
-    print(ind_start_2)
-    plt.add_subplot(6, 2, ind_1)
+    fig.add_subplot(6, 2, ind_1)
     plt.imshow(draw_img)
     plt.title('Car Positions')
-    plt.add_subplot(6, 2, ind_2)
+    fig.add_subplot(6, 2, ind_2)
     plt.imshow(heatmap, cmap='hot')
     plt.title('Heat Map')
+    plt.axis('off')
     fig.tight_layout()
 
     # pure_image_name = image_name.rsplit('/',1)[1]
     # output_image_name = 'output_images/' + pure_image_name[:-4] + '_heated' + pure_image_name[-4:]
 
-output_image_name = 'output_images/bouding_boxes_and_heatmap.png'
+output_image_name = 'output_images/bounding_boxes_and_heatmap.png'
 plt.savefig(output_image_name)
+
+plt.gcf().clear()
+heat_average = np.mean(heat_deque, 0)
+heat_average_thresh = apply_threshold(heat_average, 2.3)
+heatmap = np.clip(heat_average_thresh, 0, 255)
+labels = label(heatmap)
+
+label_image_name = 'output_images/label.png'
+plt.imshow(labels[0], cmap='gray')
+plt.savefig(label_image_name, bbox_inches='tight')
+
+plt.gcf().clear()
+final_image_name = 'output_images/final_bbox.png'
+final_image = draw_labeled_bboxes(final_image, labels)
+plt.imshow(final_image)
+plt.savefig(final_image_name, bbox_inches='tight')
 

@@ -18,9 +18,9 @@ The goals / steps of this project are the following:
 [image42]: ./output_images/bbox_test3.jpg
 [image43]: ./output_images/bbox_test4.jpg
 [image44]: ./output_images/bbox_test5.jpg
-[image5]: ./examples/bboxes_and_heat.png
-[image6]: ./examples/labels_map.png
-[image7]: ./examples/output_bboxes.png
+[image5]: ./output_images/bounding_boxes_and_heatmap.png
+[image6]: ./output_images/label.png
+[image7]: ./output_images/final_bbox.png
 [image8]: ./test_data/TestAccuracySpatialHistbin.png
 [video1]: ./project_video.mp4
 
@@ -44,12 +44,12 @@ Vehicle                    |   non-vehicle
 :-------------------------:|:-------------------------:
 ![alt_text][image0]        |  ![alt_text][image1]
 
-I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
+<!-- I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
 Here is an example using the `HSV` color space and HOG parameters of `orientations=9`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
+-->
 
-
-![alt text][image2]
+<!-- ![alt text][image2] -->
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
@@ -99,19 +99,20 @@ Here's a [link to my video result](https://www.youtube.com/watch?v=ZK4GcmxS-uY)
 
 I recorded the positions of positive detections in each frame of the video. From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions. The corrected threshold was obtained through a trial and error approach.   I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
 
+Rather than analyzing the normal cases, an edge case is picked out where two vehicles are very close to each other. It can be seen later that vehicle region can be detected but the pipeline can't differentiate the correct number of vehicles because two close vehicles are merged into one.
 Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
 
-### Here are six frames and their corresponding heatmaps:
+##### Here are six frames and their corresponding heatmaps:
 
 ![alt text][image5]
 
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
+##### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
 ![alt text][image6]
 
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
+##### Here the resulting bounding boxes are drawn onto the last frame in the series:
 ![alt text][image7]
 
-
+Note that in the final pipeline implementation, a deque of maximum length of 15 is created for the heatmap, such that almost all of the false positives in each frame in the project video can be filtered out in the final generated video. 
 
 ---
 
@@ -121,6 +122,6 @@ Here's an example result showing the heatmap from a series of frames of video, t
 
 Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
 
+* As mentioned in the Video Implementation section, the pipeline fails to differentiate two vehicles when they are very close to each other. One possible way to solve this is to assign the detected region of different vehicles with different labels, which happens at the prediction stage.This will add a third dimension to the heatmap which not only highlights the region with the highest confidence of detecting vehicles, but also memorizes the type of vehicle that is being detected. This pre-labled heatmap can be used in combination of the current labeling function to further separate two vehicles that are close or overlaped.  
 
-
-
+* Computation speed has become an issue and the current total time to process the project video amounts to over half an hour. This is can be solved by rewriting the code in c++ and introducing parallel programming. Also, extracting the HOG features just once for the entire image should also be promising, but due to the debugging difficulty deriving the pipeline, it is not adopted in this project.
